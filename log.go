@@ -23,6 +23,18 @@ const logFileExtension = ".log"
 const logFileNameRegexp = `^\d{4}-\d{2}-\d{2}\.log$`
 const logDirName = "logs"
 
+// константы - значения уровня логирования
+const (
+	CRITICAL = logging.CRITICAL
+	FATAL    = logging.FATAL
+	ERROR   = logging.ERROR
+	WARNING  = logging.WARNING
+	WARN     = logging.WARN
+	INFO     = logging.INFO
+	DEBUG    = logging.DEBUG
+	NOTSET   = logging.NOTSET
+)
+
 // getDir возвращает путь к файлам логов
 func getDir() (string, error) {
 	wd, err := os.Getwd()
@@ -104,14 +116,15 @@ func GetLogContent(name string) (string, error) {
 }
 
 // InitLog инициализирует лог-файл согласно текущей дате
-func InitLog() (*Logger, error) {
+func InitLog(logLevel logging.Level) (*Logger, error) {
 	logPath, err := getTodayPath()
 	if err != nil {
 		return nil, err
 	}
 
 	logger, err := logging.FileLogger("log", // имя лога, нигде не используется пока
-		logging.INFO, "[%6s] [%s] %s():%d -> %s\n levelname,time,funcname,lineno,message", "02.01.2006 15:04:05", logPath, true)
+		logLevel, "[%6s] [%s] %s():%d -> %s\n levelname,time,funcname,lineno,message", "02.01.2006 15:04:05",
+		logPath, true)
 	if err != nil {
 		return nil, err
 	}
